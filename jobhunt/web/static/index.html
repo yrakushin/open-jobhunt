@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open JobHunt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="addr">127.0.0.1:8787</span>
+    </div>
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="mark">OJ</div>
+        <div class="title">Open JobHunt</div>
+      </div>
+      <nav class="pillnav" role="tablist">
+        <button class="p active" data-tab="panel" type="button" role="tab">Панель</button>
+        <button class="p" data-tab="hh" type="button" role="tab">hh.ru</button>
+      </nav>
+      <button class="refresh-btn" id="btn-refresh" type="button">↻ Обновить</button>
+      <button class="refresh-btn" id="btn-instructions" type="button">📖 Инструкция</button>
+    </div>
+
+    <div class="content">
+      <div class="status-row">
+        <div class="status-card warn" id="card-session">
+          <div class="badge-ic warn" id="ic-session">!</div>
+          <div>
+            <div class="label">Сессия hh.ru</div>
+            <div class="value" id="st-session">—</div>
+          </div>
+        </div>
+        <div class="status-card warn" id="card-resume">
+          <div class="badge-ic warn" id="ic-resume">!</div>
+          <div>
+            <div class="label">Резюме</div>
+            <div class="value" id="st-resume">не загружено</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="col-left">
+          <div class="card">
+            <div class="accentbar accent-lav"></div>
+            <h3>Резюме</h3>
+            <div class="filebox">
+              <span class="fname empty" id="resume-file-name">Файл не выбран</span>
+              <button class="btn ghost" id="btn-pick-resume" type="button">Заменить</button>
+              <input type="file" id="resume-file" accept=".md,.txt,.pdf" hidden />
+            </div>
+            <button class="btn" id="btn-upload-resume" type="button">Загрузить</button>
+            <div class="status-line" id="resume-upload-status"></div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-lav"></div>
+            <h3>Сопроводительное письмо</h3>
+            <textarea id="letter-text" class="letter-box" rows="10" placeholder="Здравствуйте!&#10;&#10;Меня заинтересовала вакансия {title} в компании {company}.&#10;...&#10;&#10;{signature}"></textarea>
+            <div class="letter-actions">
+              <button class="btn primary" id="btn-save-letter" type="button">Сохранить письмо</button>
+              <label class="btn ghost file-import-label" for="letter-file">Из файла .md / .txt</label>
+              <input type="file" id="letter-file" accept=".md,.txt,text/plain,text/markdown" hidden />
+            </div>
+            <div class="status-line" id="letter-upload-status"></div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-coral"></div>
+            <h3>Зарплата и пожелания</h3>
+            <div class="row-inline">
+              <label for="min-salary">Мин. зарплата, ₽</label>
+              <input id="min-salary" type="number" min="0" step="10000" placeholder="0 = не фильтровать" />
+            </div>
+            <p class="filter-sub">Свои пожелания к вакансиям</p>
+            <textarea id="vacancy-preferences" class="listbox" rows="4" placeholder="Удалёнка&#10;Откликайся ещё на вакансии IT Project Manager&#10;Роли: Delivery Manager"></textarea>
+            <button class="btn" id="btn-save-preferences" type="button">Сохранить</button>
+            <div class="status-line muted-line" id="preferences-status"></div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-coral"></div>
+            <h3>Фильтр компаний</h3>
+            <p class="filter-sub">Не откликаться</p>
+            <textarea id="filter-blacklist" class="listbox" rows="4" placeholder="Сбер&#10;Яндекс"></textarea>
+            <p class="filter-sub">Только эти компании</p>
+            <textarea id="filter-whitelist" class="listbox" rows="2" placeholder="пусто = без ограничения"></textarea>
+            <button class="btn" id="btn-save-filters" type="button">Сохранить фильтры</button>
+            <div class="status-line muted-line" id="filter-status"></div>
+          </div>
+        </div>
+
+        <div class="col-right">
+          <div class="card">
+            <div class="accentbar accent-mint"></div>
+            <h3>Поиск на hh.ru</h3>
+            <input id="resume-search-url" class="url-input" type="url" spellcheck="false" placeholder="https://hh.ru/search/vacancy?resume=…" />
+            <div class="letter-actions">
+              <button class="btn" id="btn-save-search-url" type="button">Сохранить ссылку</button>
+              <button class="btn ghost" id="btn-open-search-hh" type="button">Открыть на hh.ru</button>
+            </div>
+            <div class="status-line muted-line" id="search-url-status"></div>
+            <p class="filter-sub">Свежесть вакансии</p>
+            <div class="thresholds" id="vacancy-age-chips" role="group" aria-label="Свежесть вакансии">
+              <button class="chip selected" type="button" data-value="all">Всё время</button>
+              <button class="chip" type="button" data-value="24h">24 часа</button>
+              <button class="chip" type="button" data-value="3d">3 дня</button>
+              <button class="chip" type="button" data-value="7d">7 дней</button>
+            </div>
+            <div class="status-line muted-line" id="vacancy-age-status"></div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-lav"></div>
+            <h3>Соответствие вакансии</h3>
+            <div class="thresholds" id="role-filter-chips" role="group" aria-label="Фильтр роли">
+              <button class="chip" type="button" data-value="off">Свободно</button>
+              <button class="chip" type="button" data-value="role_lock">По роли</button>
+            </div>
+            <div class="status-line muted-line" id="role-filter-roles"></div>
+            <div class="status-line muted-line" id="role-filter-status"></div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-lav"></div>
+            <h3>Запуск</h3>
+            <div class="row-inline">
+              <label for="run-limit">Откликов за запуск</label>
+              <input id="run-limit" type="number" min="1" max="500" value="5" />
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="btn-login" type="button">Войти на hh.ru</button>
+              <button class="btn" id="btn-dry" type="button">Тест</button>
+              <button class="btn primary" id="btn-run" type="button">Запустить отклики</button>
+              <button class="btn danger" id="btn-stop" type="button" disabled>Стоп</button>
+            </div>
+            <div class="confirm-note" id="confirm-note">Второй клик по «Запустить отклики» подтверждает отправку.</div>
+          </div>
+
+          <div class="card">
+            <div class="accentbar accent-mint"></div>
+            <h3>Ход прогона</h3>
+            <div class="job-meta">
+              <span class="log-badge" id="job-badge"><span class="dotpulse"></span>Ожидание</span>
+              <span class="sent-counter" id="sent-counter" hidden>
+                <span class="sent-num" id="sent-count">0</span><span class="sent-sep">/</span><span class="sent-goal" id="sent-goal">0</span>
+                <span class="sent-label">отправлено</span>
+              </span>
+            </div>
+            <div class="stepper" id="stepper">
+              <div class="step" data-step="search"><div class="circ">1</div><div class="slabel">Поиск</div></div>
+              <div class="step" data-step="score"><div class="circ">2</div><div class="slabel">Оценка</div></div>
+              <div class="step" data-step="apply"><div class="circ">3</div><div class="slabel">Отклик</div></div>
+              <div class="step" data-step="done"><div class="circ">4</div><div class="slabel">Готово</div></div>
+            </div>
+            <div class="logbox" id="log-output">
+              <div><span class="t"></span>Готов к работе.</div>
+            </div>
+          </div>
+
+          <div class="card card-last">
+            <div class="accentbar accent-amber"></div>
+            <h3>Отчёты</h3>
+            <ul class="reports" id="report-list">
+              <li class="empty-report muted">Загрузка…</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="instr-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="instr-title">
+      <div class="modal-head">
+        <h3 id="instr-title">Инструкция</h3>
+        <button class="modal-close" id="instr-close" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="instr-step-title" id="instr-step-title"></div>
+        <div class="instr-step-text" id="instr-step-text"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="instr-prev" type="button">← Назад</button>
+        <span class="instr-counter" id="instr-counter">1 / 9</span>
+        <button class="btn" id="instr-next" type="button">Далее →</button>
+      </div>
+    </div>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

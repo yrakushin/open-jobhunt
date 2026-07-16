@@ -1,0 +1,98 @@
+# Скопируй в config.yaml и настрой под себя:
+#   cp config.example.yaml config.yaml
+#
+# config.yaml в .gitignore — ваши фильтры, зарплата и резюме остаются локально.
+# Полное описание каждого поля — в GUIDE.md.
+
+profile:
+  resume_title: "Название резюме на hh.ru"   # точное название резюме на hh.ru; для авто-поиска и ролей в «По роли»
+  profile_path: context/resume-profile.md     # ваш профиль (.md/.txt), копируется из .example.md
+  letter_template_path: context/cover-letter.md   # пустой при init; заполните в UI → «Сохранить письмо». Пустой → LLM
+  letter_style_path: skills/stop-slop-writing.md  # стиль писем для LLM, копируется из .example.md
+  salary_expectation: ""                      # свободный текст: что отвечать на вопрос о зарплате
+  signature: ""                               # подпись в письме (имя / контакты на ваше усмотрение)
+
+search:
+  site: hh_ru
+  area: 1  # регион hh.ru: 1 = Москва. Список кодов: https://api.hh.ru/areas
+  items_per_page: 100
+  queries:                                    # keyword-поиск; используется ТОЛЬКО когда resume_search_url пуст
+    - "Product Manager"
+    - "Product Owner"
+  # Подбор по резюме на hh.ru (основной источник вакансий)
+  use_resume_search: true
+  # Ссылка «Подходящие вакансии» с hh.ru (вставляется в UI). Пусто = авто-поиск по resume_title.
+  resume_search_url: ""
+  max_pages_resume: 150   # внимание: в коде жёстко ограничено 30 страницами
+  max_pages_per_query: 20
+  # 0 = без лимита скана (обрезки вакансий не будет)
+  max_vacancies_to_scan: 0
+  # 0 = без ограничения по дате публикации (legacy; см. vacancy_age_mode)
+  period_days: 0
+  # Свежесть вакансии: all | 24h | 3d | 7d (по умолчанию all = всё время)
+  vacancy_age_mode: all
+  # Минимальная зарплата в рублях. 0 = фильтр выключен.
+  # Вакансии, у которых указанная зарплата полностью ниже порога, пропускаются.
+  min_salary_rub: 0
+  # Свободные пожелания: формат работы, локация, доп. роли — учитываются при match.
+  # В режиме «По роли» фразы вида «откликайся ещё на …» / «роли: …» добавляют разрешённые роли.
+  vacancy_preferences: ""
+  # Взвешенный match (must/preferred/bonus). См. context/match-methodology.md.
+  # Это поле сейчас не используется раннером как порог — см. llm_min_percent ниже.
+  min_match_percent: 65
+  max_applications_per_run: 20
+  # 0 = без лимита откликов на одну компанию за прогон (дубли-посты — ок)
+  max_per_company: 0
+  # Режим фильтра по роли:
+  #   role_lock — «По роли»: отклик только на роли из resume_title + доп. роли из пожеланий.
+  #               Если название не подходит, но обязанности пересекаются с профилем
+  #               ≥ role_duties_min_percent — отклик.
+  #   off       — «Свободно»: без ограничения по названию роли; отклик при пересечении
+  #               опыта/обязанностей ≥ free_experience_min_percent.
+  role_filter_mode: role_lock
+  role_duties_min_percent: 40   # «По роли»: порог обязанностей для вакансии «с другим названием»
+  free_experience_min_percent: 30  # «Свободно»: порог пересечения опыта/обязанностей
+  # Фиксированный порог LLM-оценки для отклика. Это РЕАЛЬНЫЙ порог отбора в раннере
+  # (не min_match_percent выше). По умолчанию 30. Меняется в config.yaml — в UI его нет.
+  llm_min_percent: 30
+
+# 3-балльная шкала match (must/preferred/bonus). Влияет на веса/штрафы внутри LLM-оценки.
+# Итоговый порог отбора — search.llm_min_percent выше. См. context/match-methodology.md.
+match:
+  strictness: medium   # low | medium | high → порог 10 / 55 / 65% (внутри LLM-взвешивания)
+  min_percent: 65
+  criteria:
+    role: high         # low=≥15% bonus, medium=~50% preferred, high=~85% must
+    ai_llm: medium
+    experience: high
+    b2b: low
+    delivery: medium
+
+llm:
+  provider: ollama     # ollama | openai | none (none = только rule-based оценка, без LLM)
+  ollama:
+    base_url: http://127.0.0.1:11434
+    model: qwen2.5:7b
+  openai:
+    base_url: https://api.openai.com/v1
+    api_key_env: JOBHUNT_API_KEY   # имя env-переменной с ключом (сам ключ — в env, не в файле)
+    model: gpt-4o-mini
+  # ВНИМАНИЕ: при provider: openai или fallback_to_api: true профиль резюме и описания
+  # вакансий уходят на внешний API (base_url выше). По умолчанию выключено — данные
+  # остаются на вашей машине (только hh.ru и локальный Ollama). См. GUIDE.md «LLM и приватность».
+  fallback_to_api: false
+
+browser:
+  profile_dir: ~/.jobhunt/browser-profile   # постоянный профиль Chromium (сессия hh.ru)
+  headless: false                            # true = без окна; также включается env JOBHUNT_HEADLESS=1
+  slow_mo_ms: 50                             # замедление Playwright для наглядности
+
+paths:
+  reports_dir: reports                       # относительные пути — от корня проекта; абсолютные — как есть
+  data_dir: ~/.jobhunt
+  match_methodology: context/match-methodology.md   # первые 1200 символов идут в LLM-промпт
+
+filters:
+  blacklist_employers: []   # компании для пропуска (подстрока после нормализации, без учёта регистра)
+  whitelist_employers: []   # если непусто — отклик ТОЛЬКО на эти компании
+  pause_employers: []       # устаревший дубль blacklist; UI пишет только в blacklist_employers
