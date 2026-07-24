@@ -1,0 +1,56 @@
+Open JobHunt Personal Use License
+
+Copyright (c) 2026 Yaroslav Rakushin
+
+This license governs use of the Open JobHunt software (the "Software") and
+accompanying documentation.
+
+1. Permitted use (natural persons)
+
+   The copyright holder grants any natural person a free, non-exclusive right to
+   obtain, install, use, study, and modify copies of the Software solely for
+   personal, non-commercial purposes — in particular, to search for employment
+   on their own behalf.
+
+2. Prohibition for organizations
+
+   Legal entities, sole proprietors, government and municipal bodies, and any
+   person acting on behalf of or in the interests of an organization may not use
+   the Software without separate written permission from the copyright holder.
+
+3. Prohibition of commercial exploitation by third parties
+
+   Third parties (other than the copyright holder) may not commercially exploit
+   the Software, including but not limited to:
+
+   - selling, renting, licensing, or distributing the Software for a fee;
+   - offering the Software or its features as a paid service (SaaS, subscription,
+     "bot as a service", outsourced job applications, etc.);
+   - monetizing the Software (advertising, paid courses, consulting, affiliate
+     programs, donations as a product business model);
+   - using the Software as part of a third party's commercial product or service.
+
+   The exclusive right to commercially exploit and monetize the Software belongs
+   solely to the copyright holder — Yaroslav Rakushin.
+
+4. Distribution of modifications
+
+   A natural person may distribute modified copies of the Software only if this
+   license text is included in all copies and sections 2 and 3 are not violated.
+
+5. Disclaimer of warranties
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+6. Acceptance
+
+   Installing, copying, or using the Software constitutes acceptance of this
+   license. If you do not agree to these terms, you may not use the Software.
+
+For commercial licensing inquiries:
+https://github.com/yrakushin/open-jobhunt

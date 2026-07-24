@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# Локальная конфигурация пользователя (фильтры, зарплата, резюме — ваши данные)
+config.yaml
+
+# Персональные данные пользователя — НЕ коммитятся.
+# В репозитории лежат только *.example.md шаблоны; реальный профиль/письмо/стиль
+# пользователь копирует из примеров и редактирует локально.
+context/resume-profile.md
+context/cover-letter.md
+skills/stop-slop-writing.md
+prompts/hh-autopilot.md
+context/chats-export/
+context/chats-index.md
+context/*-audit*.md
+context/match-scoring-bug*.md
+
+# Отчёты прогона содержат ваши отклики и тексты писем — локально.
+reports/*.xlsx
+reports/*.csv
+reports/*.md
+!reports/.gitkeep
+
+# Личные скрипты/данные (содержат resume hash и пр.)
+scripts/batch_apply_data.json
+scripts/restore-cursor-chats.sh
+
+# Данные браузера и сессии hh.ru (Playwright persistent profile, storage state)
+.jobhunt/
+~/.jobhunt/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+.cursor/skills/
+
+# Локальный бэкап персональных файлов (не коммитить)
+.private-backup/
